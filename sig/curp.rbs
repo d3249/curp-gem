@@ -1,4 +1,18 @@
 module Curp
   VERSION: String
+
   # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+  def generate: (first_name: String, first_lastname: String, second_lastname: String, date_of_birth: Date, sex: Sex, state: State) -> String
+
+  def first_vowel: (word: String, nth: Integer) -> String
+
+  def fix_invalid_character: (input_character: String) -> String
+
+  def fix_first_name: (first_name: String) -> String
+
+  def first_inner_consonant: (word: String) -> String
+
+  def replace_accents: (word: String) -> String
+
+  def century_identifier: (date_of_birth: Date) -> String
 end

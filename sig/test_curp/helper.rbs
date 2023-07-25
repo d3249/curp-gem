@@ -1,0 +1,9 @@
+module TestCurp
+  module Helper
+    DUMMY_DATA: Hash[Symbol, untyped]
+
+    EXPECTED_CURP: String
+
+    def self.curp_builder: (first_name: String, first_lastname: String, second_lastname: String, date_of_birth: Date, sex: Curp::Sex, state: Curp::State) -> String
+  end
+end

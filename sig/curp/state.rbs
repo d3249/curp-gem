@@ -1,0 +1,42 @@
+module Curp
+  class State
+    def self.values: -> Array[State]
+
+    FOREIGN: State
+    AGUASCALIENTES: State
+    BAJA_CALIFORNIA: State
+    BAJA_CALIFORNIA_SUR: State
+    CAMPECHE: State
+    COAHUILA: State
+    COLIMA: State
+    CHIAPAS: State
+    CHIHUAHUA: State
+    CIUDAD_DE_MEXICO: State
+    DURANGO: State
+    GUANAJUATO: State
+    GUERRERO: State
+    HIDALGO: State
+    JALISCO: State
+    ESTADO_DE_MEXICO: State
+    MICHOACAN: State
+    MORELOS: State
+    NAYARIT: State
+    NUEVO_LEON: State
+    OAXACA: State
+    PUEBLA: State
+    QUERETARO: State
+    QUINTANA_ROO: State
+    SAN_LUIS_POTOSI: State
+    SINALOA: State
+    SONORA: State
+    TABASCO: State
+    TAMAULIPAS: State
+    TLAXCALA: State
+    VERACRUZ: State
+    YUCATAN: State
+    ZACATECAS: State
+
+    attr_reader value: Symbol
+
+  end
+end

@@ -1,0 +1,7 @@
+module Curp
+  module Hash
+    CHARACTERS: String
+
+    def calculate: (curp: String) -> String
+  end
+end

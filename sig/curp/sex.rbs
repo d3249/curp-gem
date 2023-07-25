@@ -1,0 +1,7 @@
+module Curp
+  class Sex
+    def self.values: -> Array[Sex]
+
+    attr_reader value: Symbol
+  end
+end
