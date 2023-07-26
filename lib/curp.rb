@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 # typed: strong
 
+require 'yaml'
+
 require_relative "curp/version"
 require_relative 'curp/sex'
 require_relative 'curp/state'
@@ -9,18 +11,26 @@ require_relative 'curp/hash'
 # Module to calculate and validate mexican CURPs
 module Curp
 
-  class Error < StandardError; end
+  EXCEPTIONS = YAML.load_file('lib/special_cases.yml')
 
-  SKIPPABLE_FIRST_NAMES = %w(JOSE JOSÉ J J. MARÍA MARIA MA MA.).freeze
+  CONSONANTS = "[BCDFGHJKLMNÑPQRSTVWXYZ]"
+  NO_CONSONANTS = "[^BCDFGHJKLMNÑPQRSTVWXYZ]"
+
+  def self.valid?(curp)
+    given = curp[-1]
+    calculated = Curp::Hash.calculate(curp)
+
+    given == calculated
+  end
 
   def self.generate(first_name, first_lastname, second_lastname, date_of_birth, sex, state)
-    first_name = fix_symbols(fix_first_name(first_name.upcase))
-    first_lastname = fix_symbols(first_lastname.upcase)
-    second_lastname = fix_symbols(second_lastname.upcase)
+    first_name = fix_symbols(fix_first_name(fix_composite(first_name.upcase)))
+    first_lastname = fix_symbols(fix_composite(first_lastname.upcase))
+    second_lastname = fix_symbols(fix_composite(second_lastname&.upcase || 'X'))
 
     elements = []
     elements << first_lastname[0]
-    elements << nth_vowel(first_lastname)
+    elements << first_inner_vowel(first_lastname)
     elements << second_lastname[0]
     elements << first_name[0]
     elements << date_of_birth.strftime("%y%m%d")
@@ -33,9 +43,15 @@ module Curp
 
     elements = elements.map { |it| fix_invalid_character(it) }
 
-    pre_curp = elements.join
+    pre_curp = fix_forbidden_words(elements.join)
 
     "#{pre_curp}#{Curp::Hash.calculate(pre_curp)}"
+  end
+
+  def self.fix_forbidden_words(word)
+    word[1] = "X" if EXCEPTIONS["forbidden_words"].include?(word.slice(0, 4))
+
+    word
   end
 
   def self.century_identifier(date_of_birth)
@@ -43,9 +59,11 @@ module Curp
   end
 
   def self.first_inner_consonant(word)
-    matches = word.match(/^.[AEIOU]*([^AEIOU]).*$/)
+    matches = word.match(/^.#{NO_CONSONANTS}*(#{CONSONANTS}).*$/)
 
-    matches ? matches[1] : "X"
+    return 'X' unless matches
+
+    matches[1].sub(/[^A-Z]/, "X")
   end
 
   def self.fix_first_name(first_name)
@@ -53,7 +71,7 @@ module Curp
 
     return names.first if names.size == 1
 
-    SKIPPABLE_FIRST_NAMES.include?(names[0]) ? names[1] : names[0]
+    EXCEPTIONS["skippable_first_names"].include?(names[0]) ? names[1] : names[0]
   end
 
   def self.fix_symbols(word)
@@ -66,15 +84,25 @@ module Curp
   end
 
   def self.fix_invalid_character(input_character)
-    case input_character
-    when "Ñ"
-      "N"
-    else
-      input_character
-    end
+    input_character == 'Ñ' ? 'X' : input_character
   end
 
-  def self.nth_vowel(word, nth: 0)
-    word.match(/[AEIOU]/)[nth]
+  def self.first_inner_vowel(word)
+    word.match(/^.[#{CONSONANTS}]*(#{NO_CONSONANTS})/)[1].sub(/[^A-Z]/, 'X')
+  end
+
+  def self.fix_composite(name)
+    elements = name.split
+    return name if elements.size < 2
+
+    elements.shift if must_drop_first(elements.first)
+
+    elements.join(" ")
+  end
+
+  def self.must_drop_first(element)
+    EXCEPTIONS["prepositions"].include?(element) ||
+      EXCEPTIONS["conjunctions"].include?(element) ||
+      EXCEPTIONS["abbreviations"].include?(element)
   end
 end

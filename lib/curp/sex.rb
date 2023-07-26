@@ -9,8 +9,8 @@ module Curp
       @value = value
     end
 
-    MALE = Sex.new(:M).freeze
-    FEMALE = Sex.new(:F).freeze
+    MALE = Sex.new(:H).freeze
+    FEMALE = Sex.new(:M).freeze
 
     def self.values
       constants.map { |c| const_get("Curp::Sex::#{c}") }

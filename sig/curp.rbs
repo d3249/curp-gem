@@ -1,18 +1,26 @@
 module Curp
   VERSION: String
 
+  def self.fix_composite: -> untyped
+
+  def self.fix_forbidden_words: (word: String) -> String
+
   # See the writing guide of rbs: https://github.com/ruby/rbs#guides
-  def generate: (first_name: String, first_lastname: String, second_lastname: String, date_of_birth: Date, sex: Sex, state: State) -> String
+  def self.generate: (first_name: String, first_lastname: String, second_lastname: String?, date_of_birth: Date, sex: Sex, state: State) -> String
 
-  def first_vowel: (word: String, nth: Integer) -> String
+  def self.first_inner_vowel: (word: String) -> String
 
-  def fix_invalid_character: (input_character: String) -> String
+  def self.fix_invalid_character: (input_character: String) -> String
 
-  def fix_first_name: (first_name: String) -> String
+  def self.fix_first_name: (first_name: String) -> String
 
-  def first_inner_consonant: (word: String) -> String
+  def self.first_inner_consonant: (word: String) -> String
 
-  def replace_accents: (word: String) -> String
+  def self.first_composite: (word: String) -> String
 
-  def century_identifier: (date_of_birth: Date) -> String
+  def self.replace_accents: (word: String) -> String
+
+  def self.century_identifier: (date_of_birth: Date) -> String
+
+  def self.valid?: (curp: String)-> bool
 end
